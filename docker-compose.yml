@@ -1,0 +1,23 @@
+name: todudi
+services:
+  app:
+    image: chrisvel/tududi:latest
+    container_name: tududi-app
+    hostname: todudi
+    restart: always
+    environment:
+      - TUDUDI_INTERNAL_SSL_ENABLED=false
+      - TUDUDI_USER_PASSWORD=${APP_USER_PASS:-password}
+      - TUDUDI_USER_EMAIL=${APP_USER_NAME:-admin}@${BASE_DOMAIN_NAME:-example.com}
+      - TUDUDI_SESSION_SECRET=${APP_SECRET_TOKEN_32:-0B1Xo65hlCWCDeV9XjSilSSn4JbbXAyo}
+    ports:
+      - '172.17.0.1:59088:9292'
+    volumes:
+      - /var/lib/srv/${USER}/docker/chrisvel/tududi/latest/rootfs/data/todudi:/usr/src/app/tududi_db
+    networks:
+      - todudi
+
+networks:
+  todudi:
+    name: todudi
+    external: false
