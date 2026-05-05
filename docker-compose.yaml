@@ -23,7 +23,7 @@ services:
     ports:
       - '172.17.0.1:59088:9292'
     volumes:
-      - './rootfs/data/tududi:/usr/src/app/tududi_db'
+      - './volumes/data/tududi:/usr/src/app/tududi_db'
     networks:
       - tududi
 
