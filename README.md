@@ -47,7 +47,7 @@ See `docker-compose.yaml` for complete list of configurable options.
 
 ## 📂 Volumes
 
-- `./rootfs/data/tududi` - Data storage
+- `./volumes/data/tududi` - Data storage
 
 ## 🔐 Security
 
