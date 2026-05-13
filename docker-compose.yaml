@@ -17,6 +17,8 @@ services:
     logging: *default-logging
     environment:
       TZ: ${TZ:-America/New_York}
+      CONTAINER_NAME: tududi-app
+      HOSTNAME: ${BASE_HOST_NAME:-$HOSTNAME}
       TUDUDI_INTERNAL_SSL_ENABLED: false
       TUDUDI_USER_PASSWORD: ${APP_ADMIN_PASS:-changeme_admin_password}
       TUDUDI_USER_EMAIL: ${APP_ADMIN_USER:-admin}@${BASE_DOMAIN_NAME:-example.com}
@@ -27,8 +29,30 @@ services:
       - './volumes/data/tududi:/usr/src/app/tududi_db'
     networks:
       - tududi
+      - proxy
+      - cloudflare
+    labels:
+      - 'traefik.enable=true'
+      - 'cloudflare.enable=true'
+      - 'traefik.docker.network=proxy'
+      - 'cloudflare.service=http://tududi-app:9292'
+      - 'cloudflare.hostname=tududi.${CLOUDFLARE_ZONE_NAME:-}'
+      - 'traefik.http.routers.tududi-app.entrypoints=http'
+      - 'traefik.http.routers.tududi-app-secure.tls=true'
+      - 'traefik.http.routers.tududi-app.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
+      - 'traefik.http.middlewares.tududi-app-https-redirect.redirectscheme.scheme=https'
+      - 'traefik.http.routers.tududi-app.middlewares=tududi-app-https-redirect'
+      - 'traefik.http.routers.tududi-app-secure.entrypoints=https'
+      - 'traefik.http.routers.tududi-app-secure.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
+      - 'traefik.http.routers.tududi-app-secure.tls.certresolver=cloudflare'
+      - 'traefik.http.routers.tududi-app-secure.service=tududi-app'
+      - 'traefik.http.services.tududi-app.loadbalancer.server.port=9292'
 
 networks:
   tududi:
     name: tududi
     external: false
+  proxy:
+    external: true
+  cloudflare:
+    external: true
