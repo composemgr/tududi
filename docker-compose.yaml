@@ -11,15 +11,16 @@ services:
   app:
     image: chrisvel/tududi:latest
     container_name: tududi-app
-    hostname: tududi
+    hostname: ${BASE_HOST_NAME:-$HOSTNAME}
     restart: always
     pull_policy: always
     logging: *default-logging
     environment:
+      TZ: ${TZ:-America/New_York}
       TUDUDI_INTERNAL_SSL_ENABLED: false
-      TUDUDI_USER_PASSWORD: ${APP_USER_PASS:-password}
-      TUDUDI_USER_EMAIL: ${APP_USER_NAME:-admin}@${BASE_DOMAIN_NAME:-example.com}
-      TUDUDI_SESSION_SECRET: ${APP_SECRET_TOKEN_32:-0B1Xo65hlCWCDeV9XjSilSSn4JbbXAyo}
+      TUDUDI_USER_PASSWORD: ${APP_ADMIN_PASS:-changeme_admin_password}
+      TUDUDI_USER_EMAIL: ${APP_ADMIN_USER:-admin}@${BASE_DOMAIN_NAME:-example.com}
+      TUDUDI_SESSION_SECRET: ${APP_SECRET_KEY:-changeme_secret_key_min_32_chars}
     ports:
       - '172.17.0.1:59088:9292'
     volumes:
