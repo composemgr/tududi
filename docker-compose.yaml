@@ -24,9 +24,9 @@ services:
       TUDUDI_USER_EMAIL: ${APP_ADMIN_USER:-admin}@${BASE_DOMAIN_NAME:-example.com}
       TUDUDI_SESSION_SECRET: ${APP_SECRET_KEY:-changeme_secret_key_min_32_chars}
     ports:
-      - '172.17.0.1:59088:9292'
+      - '172.17.0.1:59088:3002'
     volumes:
-      - './volumes/data/tududi:/usr/src/app/tududi_db'
+      - './volumes/data/tududi:/app/backend/db'
     networks:
       - tududi
       - proxy
@@ -35,7 +35,7 @@ services:
       - 'traefik.enable=true'
       - 'cloudflare.enable=true'
       - 'traefik.docker.network=proxy'
-      - 'cloudflare.service=http://tududi-app:9292'
+      - 'cloudflare.service=http://tududi-app:3002'
       - 'cloudflare.hostname=tududi.${CLOUDFLARE_ZONE_NAME:-}'
       - 'traefik.http.routers.tududi-app.entrypoints=http'
       - 'traefik.http.routers.tududi-app-secure.tls=true'
@@ -46,7 +46,7 @@ services:
       - 'traefik.http.routers.tududi-app-secure.rule=Host($(${BASE_HOST_NAME:-$HOSTNAME}))'
       - 'traefik.http.routers.tududi-app-secure.tls.certresolver=cloudflare'
       - 'traefik.http.routers.tududi-app-secure.service=tududi-app'
-      - 'traefik.http.services.tududi-app.loadbalancer.server.port=9292'
+      - 'traefik.http.services.tududi-app.loadbalancer.server.port=3002'
 
 networks:
   tududi:
